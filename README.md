@@ -25,12 +25,9 @@ and load a JSON file into the *Presets*.
 From there you can create a new *Preset* from the selection.
 
 There are 3 buttons per Preset.
-
-**Edit** : Select the *Preset* for inspection.
-
-**Create** : Drag & drop from this button into the **Scene** to create a *GameObject* from this *Preset*.
-
-**Delete** : Delete the *Preset*.
+- **Edit** : Select the *Preset* for inspection.
+- **Create** : Drag & drop from this button into the **Scene** to create a *GameObject* from this *Preset*.
+- **Delete** : Delete the *Preset*.
 
 ## Asset StarPresets
 The asset can be find at :
