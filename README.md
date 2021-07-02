@@ -7,8 +7,11 @@ Click on "Create Preset" from *Star*'s context menu.
 
 ## From the shortcut
 Select any *GameObject* with a *Component* *Star*.
+
 The default keyboard shortcut is Ctrl + F4.
+
 You can change it at "Edit/Shortcuts...", section "Fault In Our Stars".
+
 It will generate a *Preset* from the first *Star* found.
 
 # Manage the Preset
@@ -16,6 +19,7 @@ It will generate a *Preset* from the first *Star* found.
 Access the window at "Fault In Our Stars/Star Presets".
 
 The top buttons allow you to export the *Presets* into a JSON file,
+
 and load a JSON file into the *Presets*.
 
 From there you can create a new *Preset* from the selection.
