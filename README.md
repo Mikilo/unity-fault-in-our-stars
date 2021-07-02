@@ -3,6 +3,7 @@
 # Create a Preset
 ## From the *Component*'s contextual menu
 Add the *Component* *Star* on any *GameObject*.
+
 Click on "Create Preset" from *Star*'s context menu.
 
 ## From the shortcut
