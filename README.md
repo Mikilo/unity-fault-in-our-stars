@@ -31,7 +31,18 @@ There are 3 buttons per Preset.
 
 ## Asset StarPresets
 The asset can be find at :
-
 `Assets/Plugins/FaultInOurStars/StarPresets.asset`
 
 Refer to #Manage-the-Preset for usage.
+
+### How it works
+The StarPresets asset works by self-containing *Preset* as sub-assets.
+
+Which might bring some uncertainty concerning the reliability with *AssetDatabase*, but so far it seems to work as expected.
+
+Using *Preset* directly greatly eases the process when adding/removing/importing/exporting/dragging. Yes, just that.
+
+# Obstacles
+I tried to use a maximum of modern/recent APIs.
+
+Unfortunately ScriptableSingleton failed me, it started to output errors due to the singleton instancing.
