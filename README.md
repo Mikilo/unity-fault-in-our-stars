@@ -60,3 +60,5 @@ I had to use a "normal" singleton pattern.
 In the other hand, *Preset* seems pretty solid and reliable. I was the first time I ever used those 2 APIs, I knew them, but never used.
 
 Beside that, not much obstacles on the road, most were previously known from my tooling background hobby.
+
+The UX might not be the best, but there should be enough feedbacks to guide the user.
