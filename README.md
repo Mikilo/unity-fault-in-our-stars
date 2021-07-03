@@ -43,6 +43,13 @@ Which might bring some uncertainty concerning the reliability with *AssetDatabas
 
 Using *Preset* directly greatly eases the process when adding/removing/importing/exporting/dragging. Yes, just that.
 
+# Star
+A *Star* in the scene is represent by a colored sphere and its star radius.
+
+The sphere can be manipulated directly from the scene.
+
+Hold **Ctrl** to manipulate the gravity well radius.
+
 # Challenges & Obstacles
 I tried to use a maximum of modern/recent APIs. (Preset, SettingsProvider, Shortcut, ScriptableSingleton and a little bit of UIToolkit)
 
