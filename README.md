@@ -43,7 +43,13 @@ Which might bring some uncertainty concerning the reliability with *AssetDatabas
 
 Using *Preset* directly greatly eases the process when adding/removing/importing/exporting/dragging. Yes, just that.
 
-# Obstacles
-I tried to use a maximum of modern/recent APIs.
+# Challenges & Obstacles
+I tried to use a maximum of modern/recent APIs. (Preset, SettingsProvider, Shortcut, ScriptableSingleton and a little bit of UIToolkit)
 
-Unfortunately ScriptableSingleton failed me, it started to output errors due to the singleton instancing.
+Unfortunately *ScriptableSingleton* failed me, it started to output errors due to the singleton instancing.
+
+I had to use a "normal" singleton pattern.
+
+In the other hand, *Preset* seems pretty solid and reliable. I was the first time I ever used those 2 APIs, I knew them, but never used.
+
+Beside that, not much obstacles on the road, most were previously known from my tooling background hobby.
