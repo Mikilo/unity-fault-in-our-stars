@@ -6,25 +6,17 @@ using UnityEngine.UIElements;
 
 namespace FaultInOurStarsEditor
 {
-	class FaultInOurStarsSettings : SettingsProvider
+    class FaultInOurStarsSettings : SettingsProvider
 	{
 		public const string	PresetsPathKeyPref = nameof(FaultInOurStarsSettings) + "_" + nameof(PresetsPath);
 		public const string	LastSaveFilePathKeyPref = nameof(FaultInOurStarsSettings) + "_LastSaveFilePath";
 		public const string	LastOpenFolderPathKeyPref = nameof(FaultInOurStarsSettings) + "_LastOpenFolderPath";
 
-		public enum FieldButtons
-		{
-			None = 0,
-			All = Browse | Open,
-			Browse = 1,
-			Open = 2
-		}
-
 		public static string	PresetsPath
 		{
 			get
 			{
-				return EditorPrefs.GetString(FaultInOurStarsSettings.PresetsPathKeyPref, "Assets/Plugins/" + Constants.PackageName + "/StarPresets.asset");
+				return EditorPrefs.GetString(FaultInOurStarsSettings.PresetsPathKeyPref, "Assets/Plugins/" + Constants.PackageName + "/" + nameof(StarPresets) + ".asset");
 			}
 			set
 			{
@@ -56,104 +48,68 @@ namespace FaultInOurStarsEditor
 		public override void	OnGUI(string searchContext)
 		{
 			EditorGUI.BeginChangeCheck();
-			string newPath = FaultInOurStarsSettings.SaveFileField("Presets Path", FaultInOurStarsSettings.PresetsPath);
-			if (EditorGUI.EndChangeCheck())
+			string	path = FaultInOurStarsSettings.PresetsPath;
+			string	newPath = this.SaveFileField("Presets Path", path);
+			if (EditorGUI.EndChangeCheck() && path != newPath)
+			{
+				if (AssetDatabase.LoadAssetAtPath<Object>(newPath) != null)
+				{
+					if (AssetDatabase.LoadAssetAtPath<Object>(path) != null)
+					{
+						if (EditorUtility.DisplayDialog(Constants.ReadableName, $"Asset at \"{newPath}\" already exist. Do you want to overwrite with the current?", "Yes", "No") == true)
+						{
+							AssetDatabase.DeleteAsset(newPath);
+							AssetDatabase.MoveAsset(path, newPath);
+						}
+					}
+				}
+				else
+				{
+					if (AssetDatabase.LoadAssetAtPath<Object>(path) != null)
+					{
+						if (EditorUtility.DisplayDialog(Constants.ReadableName, $"Do you want to move the current to the new path?", "Yes", "No") == true)
+							AssetDatabase.MoveAsset(path, newPath);
+					}
+				}
+
 				FaultInOurStarsSettings.PresetsPath = newPath;
-		}
-
-		public static string	SaveFileField(string label, string path, string defaultName = "", string extension = "", FieldButtons buttons = FieldButtons.All)
-		{
-			using (new EditorGUILayout.HorizontalScope())
-			{
-				if (label != null)
-					path = EditorGUILayout.TextField(label, path);
-				else
-					path = EditorGUILayout.TextField(path);
-
-				if ((buttons & FieldButtons.Browse) != 0)
-				{
-					GUIContent content = new GUIContent();
-					content.text = "Browse";
-
-					Rect	r = GUILayoutUtility.GetRect(content, buttons == FieldButtons.All ? "ButtonLeft" : GUI.skin.button, GUILayout.ExpandWidth(false));
-					r.y -= 2F;
-					if (GUI.Button(r, content, buttons == FieldButtons.All ? "ButtonLeft" : GUI.skin.button) == true)
-					{
-						string	directory = string.IsNullOrEmpty(path) == false ? Path.GetDirectoryName(path) : EditorPrefs.GetString(FaultInOurStarsSettings.LastSaveFilePathKeyPref);
-						string	projectPath = EditorUtility.SaveFilePanelInProject(label, directory, defaultName, extension);
-
-						if (string.IsNullOrEmpty(projectPath) == false)
-						{
-							EditorPrefs.SetString(FaultInOurStarsSettings.LastSaveFilePathKeyPref, Path.GetDirectoryName(projectPath));
-							path = projectPath;
-							GUI.FocusControl(null);
-						}
-					}
-				}
-
-				if ((buttons & FieldButtons.Open) != 0)
-				{
-					using (new EditorGUI.DisabledScope(false))
-					{
-						GUI.enabled = true;
-						GUIContent content = new GUIContent();
-						content.text = "Open";
-
-						Rect	r = GUILayoutUtility.GetRect(content, buttons == FieldButtons.All ? "ButtonRight" : GUI.skin.button, GUILayout.ExpandWidth(false));
-						r.y -= 2F;
-						if (GUI.Button(r, content, buttons == FieldButtons.All ? "ButtonRight" : GUI.skin.button) == true)
-							EditorUtility.RevealInFinder(path);
-					}
-				}
+				StarPresets.instance = null;
 			}
-
-			return path;
 		}
 
-		public static string	OpenFolderField(string label, string path, FieldButtons buttons = FieldButtons.All)
+		private string	SaveFileField(string label, string path)
 		{
 			using (new EditorGUILayout.HorizontalScope())
 			{
-				if (label != null)
-					path = EditorGUILayout.TextField(label, path);
-				else
-					path = EditorGUILayout.TextField(path);
+				EditorGUILayout.DelayedTextField(label, path);
 
-				if ((buttons & FieldButtons.Browse) != 0)
+				GUIContent content = new GUIContent();
+				content.text = "Browse";
+
+				Rect	r = GUILayoutUtility.GetRect(content, "ButtonLeft", GUILayout.ExpandWidth(false));
+				r.y -= 2F;
+				if (GUI.Button(r, content, "ButtonLeft") == true)
 				{
-					GUIContent content = new GUIContent();
-					content.text = "Browse";
+					string	directory = string.IsNullOrEmpty(path) == false ? Path.GetDirectoryName(path) : EditorPrefs.GetString(FaultInOurStarsSettings.LastSaveFilePathKeyPref);
+					string	projectPath = EditorUtility.SaveFilePanelInProject(label, Path.GetFileName(path), "asset", string.Empty, directory);
 
-					Rect r = GUILayoutUtility.GetRect(content, buttons == FieldButtons.All ? "ButtonLeft" : GUI.skin.button, GUILayout.ExpandWidth(false));
-					r.y -= 2F;
-
-					if (GUI.Button(r, "Browse", buttons == FieldButtons.All ? "ButtonLeft" : GUI.skin.button) == true)
+					if (string.IsNullOrEmpty(projectPath) == false)
 					{
-						path = string.IsNullOrEmpty(path) == false ? path : EditorPrefs.GetString(FaultInOurStarsSettings.LastOpenFolderPathKeyPref);
-						string projectPath = EditorUtility.OpenFolderPanel(label, path, string.Empty);
-
-						if (string.IsNullOrEmpty(projectPath) == false)
-						{
-							EditorPrefs.SetString(FaultInOurStarsSettings.LastOpenFolderPathKeyPref, Path.GetDirectoryName(projectPath));
-							path = projectPath;
-							GUI.FocusControl(null);
-						}
+						EditorPrefs.SetString(FaultInOurStarsSettings.LastSaveFilePathKeyPref, Path.GetDirectoryName(projectPath));
+						path = projectPath;
+						GUI.FocusControl(null);
 					}
 				}
 
-				if ((buttons & FieldButtons.Open) != 0)
+				using (new EditorGUI.DisabledScope(false))
 				{
-					using (new EditorGUI.DisabledScope(false))
-					{
-						GUIContent content = new GUIContent();
-						content.text = "Open";
+					GUI.enabled = true;
+					content.text = "Open";
 
-						GUI.enabled = true;
-						Rect r = GUILayoutUtility.GetRect(content, buttons == FieldButtons.All ? "ButtonRight" : GUI.skin.button, GUILayout.ExpandWidth(false));
-						r.y -= 2F;
-						if (GUI.Button(r, content, buttons == FieldButtons.All ? "ButtonRight" : GUI.skin.button) == true)
-							EditorUtility.RevealInFinder(path);
-					}
+					r = GUILayoutUtility.GetRect(content, "ButtonRight", GUILayout.ExpandWidth(false));
+					r.y -= 2F;
+					if (GUI.Button(r, content, "ButtonRight") == true)
+						EditorUtility.RevealInFinder(path);
 				}
 			}
 

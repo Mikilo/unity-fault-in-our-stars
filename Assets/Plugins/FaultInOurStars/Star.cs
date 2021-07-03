@@ -5,7 +5,7 @@ namespace FaultInOurStars
 {
 	public class Star : MonoBehaviour
 	{
-		public Color	color;
+		public Color	color = Color.black;
 		public float	starRadius;
 		public float	gravityWellRadius;
 		public string	starName;

@@ -3,13 +3,14 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Presets;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 namespace FaultInOurStarsEditor
 {
 	public class StarPresets : ScriptableObject
 	{
-		private static StarPresets	instance;
+		internal static StarPresets	instance;
 		public static StarPresets	Instance
 		{
 			get
@@ -32,6 +33,31 @@ namespace FaultInOurStarsEditor
 
 		[NonSerialized]
 		public Preset[]	presets;
+
+		[Shortcut(Constants.ReadableName + "/Create " + nameof(Preset), KeyCode.F4, ShortcutModifiers.Control)]
+		public static void	CreatePresetFromShortcut()
+		{
+			GameObject	selected = Selection.activeGameObject;
+
+			if (selected != null)
+			{
+				Star	star = selected.GetComponent<Star>();
+
+				if (star != null)
+				{
+					StarPresets.Instance.AddPreset(star);
+					return;
+				}
+			}
+
+			EditorUtility.DisplayDialog(Constants.ReadableName, $"You need to select a {nameof(GameObject)} with a {nameof(Component)} {nameof(Star)}.", "OK");
+		}
+
+		[MenuItem("CONTEXT/" + nameof(Star) + "/Create " + nameof(Preset))]
+		public static void	AddPreset(MenuCommand command)
+		{
+			StarPresets.Instance.AddPreset((Star)command.context);
+		}
 
 		private static string	GetFilePath()
 		{
@@ -58,7 +84,7 @@ namespace FaultInOurStarsEditor
 		{
 			Array.Resize(ref this.presets, this.presets.Length + 1);
 			this.presets[this.presets.Length - 1] = new Preset(star);
-			this.presets[this.presets.Length - 1].name = "Preset " + this.presets.Length;
+			this.presets[this.presets.Length - 1].name = nameof(Preset) + " " + this.presets.Length;
 
 			AssetDatabase.AddObjectToAsset(this.presets[this.presets.Length - 1], StarPresets.GetFilePath());
 			AssetDatabase.SaveAssets();
@@ -72,7 +98,7 @@ namespace FaultInOurStarsEditor
 			list.RemoveAt(i);
 
 			for (i = list.Count - 1; i >= 0; --i)
-				list[i].name = "Preset " + (i + 1);
+				list[i].name = nameof(Preset) + " " + (i + 1);
 
 			this.presets = list.ToArray();
 

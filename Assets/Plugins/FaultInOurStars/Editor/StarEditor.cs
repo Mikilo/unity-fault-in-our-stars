@@ -9,7 +9,7 @@ namespace FaultInOurStarsEditor
 	[CustomEditor(typeof(Star))]
 	public class StarEditor : Editor
 	{
-		public override VisualElement CreateInspectorGUI()
+		public override VisualElement	CreateInspectorGUI()
 		{
 			VisualElement	root = new VisualElement();
 
@@ -24,7 +24,9 @@ namespace FaultInOurStarsEditor
 				horizontalName.Add(starName);
 
 				ColorField	color = new ColorField();
+				color.showAlpha = false;
 				color.bindingPath = nameof(Star.color);
+				color.style.minWidth = 30F;
 				color.style.flexShrink = 1F;
 				horizontalName.Add(color);
 
@@ -42,7 +44,7 @@ namespace FaultInOurStarsEditor
 			return root;
 		}
 
-		protected virtual void OnSceneGUI()
+		protected virtual void	OnSceneGUI()
 		{
 			Star		t = target as Star;
 			Transform	tr = t.transform;
@@ -51,16 +53,28 @@ namespace FaultInOurStarsEditor
 			Handles.color = t.color;
 			Handles.Label(pos, t.starName + " (R=" + t.starRadius.ToString("F2") + ")");
 
-			EditorGUI.BeginChangeCheck();
-			float	r = Handles.RadiusHandle(tr.localRotation, pos, t.starRadius);
-			if (EditorGUI.EndChangeCheck())
+			if (Event.current.control == false)
 			{
-				if (Event.current.shift) // Hold Shift to round radius.
-					r = Mathf.Round(r);
-				t.starRadius = r;
+				EditorGUI.BeginChangeCheck();
+				float	r = Handles.RadiusHandle(tr.localRotation, pos, t.starRadius);
+				if (EditorGUI.EndChangeCheck())
+				{
+					if (Event.current.shift) // Hold Shift to round radius.
+						r = Mathf.Round(r);
+					t.starRadius = r;
+				}
 			}
-
-			// TODO Switch handle for gravity well on Alt/Control?
+			else
+			{
+				EditorGUI.BeginChangeCheck();
+				float	r = Handles.RadiusHandle(tr.localRotation, pos, t.gravityWellRadius);
+				if (EditorGUI.EndChangeCheck())
+				{
+					if (Event.current.shift) // Hold Shift to round radius.
+						r = Mathf.Round(r);
+					t.gravityWellRadius = r;
+				}
+			}
 		}
 	}
 }
